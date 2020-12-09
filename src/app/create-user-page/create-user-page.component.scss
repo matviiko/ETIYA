@@ -1,0 +1,23 @@
+.form__list {
+  width: 100%;
+  padding: 20px 20px 0 20px;
+
+  &:last-child {}
+
+  label {
+    display: flex;
+    flex-direction: column;
+  }
+
+  button {
+    padding: 10px 0;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.title {
+  width: 200px;
+}
+
+

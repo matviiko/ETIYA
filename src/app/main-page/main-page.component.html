@@ -1,0 +1,230 @@
+<div class="main__info d-flex">
+  <div class="title col-sm-2">
+    <h3>Main info</h3>
+  </div>
+  <div class="form__list pt-4 col-sm-10">
+    <form (ngSubmit)="submit()" [formGroup]="searchForm">
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label for="first-name">
+            Fist Name:
+          </label>
+          <input
+            class="form-control"
+            id="first-name"
+            type="text"
+            placeholder="First Name"
+            formControlName="firstName"
+          >
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label for="last-name">
+            Last Name:
+          </label>
+          <input
+            class="form-control"
+            id="last-name"
+            type="text"
+            placeholder="Last Name"
+            formControlName="lastName"
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-4">
+          <label for="username">
+            Username:
+          </label>
+          <input
+            class="form-control"
+            id="username"
+            type="text"
+            placeholder="Username"
+            formControlName="username"
+          >
+        </div>
+
+        <div class="form-group col-sm-4">
+          <label for="phone">
+            Phone:
+          </label>
+          <input
+            class="form-control"
+            id="phone"
+            type="text"
+            placeholder="Phone"
+            formControlName="phone"
+          >
+        </div>
+
+        <div class="form-group col-sm-4">
+          <label for="email">
+            Email:
+          </label>
+          <input
+            [ngClass]="{ 'is-invalid': searchForm.get('email')?.invalid && searchForm.get('email')?.touched }"
+            class="form-control"
+            id="email"
+            type="email"
+            placeholder="Email"
+            formControlName="email"
+          >
+          <div class="invalid-feedback" *ngIf="searchForm.get('email')?.invalid && searchForm.get('email')?.touched">
+            <p *ngIf="searchForm.get('email')?.errors?.required">Enter your email</p>
+            <p *ngIf="searchForm.get('email')?.errors?.email">You must enter email</p>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button type="button" (click)="reset()" class="btn btn-secondary m-3 px-3">Clear</button>
+          <button type="submit" class="btn btn-primary m-3 px-3">Find</button>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="users.length">
+      <table class="table table-bordered" [formGroup]="editForm">
+        <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Username</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Email</th>
+          <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container formArrayName="alternativeUsers" *ngFor="let user of users; let i = index">
+          <tr *ngIf="!openEditRowListId.includes(user.id)">
+            <td>{{i + 1}}</td>
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.phone}}</td>
+            <td>{{user.email}}</td>
+            <td>
+              <button (click)="editUser(user.id)" type="button" class="btn btn-light">Edit</button>
+              <button (click)="deleteUser(user.id)" type="button" class="btn btn-light">Delete</button>
+              <button (click)="openTrigger(user.id)" type="button" class="btn btn-light">Address Info</button>
+            </td>
+          </tr>
+          <ng-container [formGroupName]="i">
+            <tr *ngIf="openEditRowListId.includes(user.id)" >
+              <td>{{i + 1}}</td>
+              <td>
+                <label [for]="'firstName-'+ i">
+                  <input class="edit__input" [id]="'firstName-'+ i" type="text" formControlName="firstName">
+                </label>
+              </td>
+              <td>
+                <label [for]="'lastName-'+ i">
+                  <input [id]="'lastName-'+ i" type="text" formControlName="lastName">
+                </label>
+              </td>
+              <td>
+                <label [for]="'username-'+ i">
+                  <input class="edit__input" [id]="'username-'+ i" type="text" formControlName="username">
+                </label>
+              </td>
+              <td>
+                <label [for]="'phone-'+ i">
+                  <input class="edit__input" [id]="'phone-'+ i" type="text" formControlName="phone">
+                </label>
+              </td>
+              <td>
+                <label [for]="'email-'+ i">
+                  <input class="edit__input" [id]="'email-'+ i" type="text" formControlName="email">
+                </label>
+              </td>
+              <td>
+                <button (click)="saveUser(user.id, i)" type="button" class="btn btn-light">Save</button>
+                <button (click)="cancelEditUser(user.id)" type="button" class="btn btn-light">Cancel</button>
+              </td>
+            </tr>
+            <tr class="hidden-row" [ngClass]="{'open': openedRowListID.includes(user.id)}">
+            <td colspan="7">
+              <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Type Address</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">City</th>
+                  <th scope="col">Country</th>
+                  <th scope="col">Post Code</th>
+                  <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container formArrayName="alternateAddresses" *ngFor="let address of user.alternateAddresses let idx = index">
+                  <tr *ngIf="!(user.isShowEditAddressRow === address.id)">
+                    <th scope="row">{{idx + 1}}</th>
+                    <td>{{address.typeAddress}}</td>
+                    <td>{{address.address}}</td>
+                    <td>{{address.city}}</td>
+                    <td>{{address.country}}</td>
+                    <td>{{address.postCode}}</td>
+                    <td>
+                      <button (click)="showEditAddress(user.id, address.id)" type="button" class="btn btn-light">Edit</button>
+                      <button (click)="deleteAddress(user.id, address.id)" type="button" class="btn btn-light">Delete</button>
+                      <button *ngIf="!creatableAddress " (click)="addNewAddress(user.id, i)" type="button" class="btn btn-light">Add new</button>
+                    </td>
+                  </tr>
+                  <ng-container [formGroupName]="idx">
+                    <tr *ngIf="user.isShowEditAddressRow === address.id">
+                      <td>{{idx + 1}}</td>
+                      <td>
+                        <label [for]="i + '-typeAddress-'+ idx">
+                          <select [id]="i + '-typeAddress-'+ idx" formControlName="typeAddress">
+                            <option [ngValue]="null" disabled>Choose address type</option>
+                            <option value="Billing address">Billing Address</option>
+                            <option value="Shipment Address">Shipment Address</option>
+                            <option value="Home Address">Home Address</option>
+                          </select>
+                        </label>
+                      </td>
+                      <td>
+                        <label [for]="i + '-address-'+ idx">
+                          <input [id]="i + '-address-'+ idx" type="text" formControlName="address">
+                        </label>
+                      </td>
+                      <td>
+                        <label [for]="i + '-city-'+ idx">
+                          <input class="edit__input" [id]="i + '-city-'+ idx" type="text" formControlName="city">
+                        </label>
+                      </td>
+                      <td>
+                        <label [for]="i + '-country-'+ idx">
+                          <select class="form-control" [id]="i + '-country-'+ idx" formControlName="country">
+                            <option [ngValue]="null" disabled>Choose country</option>
+                            <option *ngFor="let country of countries" [value]="country.toLowerCase()">
+                              {{country}}
+                            </option>
+                          </select>
+                        </label>
+                      </td>
+                      <td>
+                        <label [for]="i + '-postCode-'+ idx">
+                          <input class="edit__input" [id]="i + '-postCode-'+ idx" type="text" formControlName="postCode">
+                        </label>
+                      </td>
+                      <td>
+                        <button (click)="saveUser(user.id, i)" type="button" class="btn btn-light">Save</button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          </ng-container>
+        </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

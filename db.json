@@ -1,0 +1,96 @@
+{
+  "profiles": [
+    {
+      "firstName": "Mukola",
+      "lastName": "Perec",
+      "username": "mucola",
+      "phone": "+380964960758",
+      "email": "m@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "alternateAddresses": [
+        {
+          "typeAddress": "Billing address",
+          "address": "Vovchunecka 208",
+          "city": "Ivano-Frankivsk",
+          "country": "ukraine",
+          "postCode": "76001",
+          "id": 1
+        }
+      ],
+      "id": 4
+    },
+    {
+      "firstName": "Denis",
+      "lastName": "Kopchak",
+      "username": "denis",
+      "phone": "+380964960758",
+      "email": "matviy.kopchak@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "alternateAddresses": [
+        {
+          "typeAddress": "Shipment Address",
+          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
+          "city": "М. ІВАНО-ФРАНКІВСЬК",
+          "country": "ukraine",
+          "postCode": "76019",
+          "id": 1
+        },
+        {
+          "typeAddress": "Shipment Address",
+          "address": "new",
+          "city": "new",
+          "country": "bahrain",
+          "postCode": "11111",
+          "id": 2
+        }
+      ],
+      "id": 7
+    },
+    {
+      "firstName": "Matvii",
+      "lastName": "Kopchak",
+      "username": "matvii",
+      "phone": "+380964960758",
+      "email": "matviy.kopchak@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "alternateAddresses": [
+        {
+          "typeAddress": "Billing address",
+          "address": "Vovchunecka 208",
+          "city": "Ivano-Frankivsk",
+          "country": "ukraine",
+          "postCode": "76000",
+          "id": 1
+        },
+        {
+          "typeAddress": "Shipment Address",
+          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
+          "city": "М. ІВАНО-ФРАНКІВСЬК",
+          "country": "ukraine",
+          "postCode": "76019",
+          "id": 2
+        },
+        {
+          "typeAddress": "Home Address",
+          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
+          "city": "М. ІВАНО-ФРАНКІВСЬК",
+          "country": "austria",
+          "postCode": "76019",
+          "id": 3
+        },
+        {
+          "typeAddress": "Shipment Address",
+          "address": "zaliznuchna",
+          "city": "Lviv",
+          "country": "ukraine",
+          "postCode": "65565",
+          "id": 4
+        }
+      ],
+      "id": 8
+    }
+  ]
+}
