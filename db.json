@@ -2,7 +2,7 @@
   "profiles": [
     {
       "firstName": "Mukola",
-      "lastName": "Perec",
+      "lastName": "Perecsa",
       "username": "mucola",
       "phone": "+380964960758",
       "email": "m@gmail.com",
@@ -14,8 +14,24 @@
           "address": "Vovchunecka 208",
           "city": "Ivano-Frankivsk",
           "country": "ukraine",
-          "postCode": "76001",
+          "postCode": "76002",
           "id": 1
+        },
+        {
+          "typeAddress": "Billing address",
+          "address": "Lesya Ukrainku 5",
+          "city": "Ivano-Frankivsk",
+          "country": "ukraine",
+          "postCode": "76007",
+          "id": 2
+        },
+        {
+          "typeAddress": "Home Address",
+          "address": "Shevchenka 14",
+          "city": "Lviv",
+          "country": "ukraine",
+          "postCode": "76074",
+          "id": 3
         }
       ],
       "id": 4
@@ -30,20 +46,12 @@
       "confirmPassword": "123456",
       "alternateAddresses": [
         {
-          "typeAddress": "Shipment Address",
-          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
-          "city": "М. ІВАНО-ФРАНКІВСЬК",
+          "typeAddress": "Billing address",
+          "address": "Lesya Ukrainku 14",
+          "city": "Ivano-Frankivsk",
           "country": "ukraine",
-          "postCode": "76019",
+          "postCode": "78777",
           "id": 1
-        },
-        {
-          "typeAddress": "Shipment Address",
-          "address": "new",
-          "city": "new",
-          "country": "bahrain",
-          "postCode": "11111",
-          "id": 2
         }
       ],
       "id": 7
@@ -66,20 +74,12 @@
           "id": 1
         },
         {
-          "typeAddress": "Shipment Address",
-          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
-          "city": "М. ІВАНО-ФРАНКІВСЬК",
-          "country": "ukraine",
-          "postCode": "76019",
-          "id": 2
-        },
-        {
           "typeAddress": "Home Address",
           "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
           "city": "М. ІВАНО-ФРАНКІВСЬК",
           "country": "austria",
           "postCode": "76019",
-          "id": 3
+          "id": 2
         },
         {
           "typeAddress": "Shipment Address",
@@ -87,6 +87,14 @@
           "city": "Lviv",
           "country": "ukraine",
           "postCode": "65565",
+          "id": 3
+        },
+        {
+          "typeAddress": "Home Address",
+          "address": "lukasa15",
+          "city": "Harkiv",
+          "country": "ukraine",
+          "postCode": "12345",
           "id": 4
         }
       ],

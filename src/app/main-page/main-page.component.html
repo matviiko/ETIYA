@@ -82,7 +82,7 @@
       </div>
     </form>
 
-    <div *ngIf="users.length">
+    <div *ngIf="alternativeUsers.value.length">
       <table class="table table-bordered" [formGroup]="editForm">
         <thead class="thead-light">
         <tr>
@@ -96,22 +96,22 @@
         </tr>
         </thead>
         <tbody>
-        <ng-container formArrayName="alternativeUsers" *ngFor="let user of users; let i = index">
-          <tr *ngIf="!openEditRowListId.includes(user.id)">
+        <ng-container formArrayName="alternativeUsers" *ngFor="let control of alternativeUsers.controls; let i = index">
+          <tr *ngIf="!editableRowListId.includes(i)">
             <td>{{i + 1}}</td>
-            <td>{{user.firstName}}</td>
-            <td>{{user.lastName}}</td>
-            <td>{{user.username}}</td>
-            <td>{{user.phone}}</td>
-            <td>{{user.email}}</td>
+            <td>{{control.get('firstName').value}}</td>
+            <td>{{control.get('lastName').value}}</td>
+            <td>{{control.get('username').value}}</td>
+            <td>{{control.get('phone').value}}</td>
+            <td>{{control.get('email').value}}</td>
             <td>
-              <button (click)="editUser(user.id)" type="button" class="btn btn-light">Edit</button>
-              <button (click)="deleteUser(user.id)" type="button" class="btn btn-light">Delete</button>
-              <button (click)="openTrigger(user.id)" type="button" class="btn btn-light">Address Info</button>
+              <button (click)="editUser(i)" type="button" class="btn btn-light">Edit</button>
+              <button (click)="deleteUser(i)" type="button" class="btn btn-light">Delete</button>
+              <button (click)="openTrigger(i)" type="button" class="btn btn-light">Address Info</button>
             </td>
           </tr>
           <ng-container [formGroupName]="i">
-            <tr *ngIf="openEditRowListId.includes(user.id)" >
+            <tr *ngIf="editableRowListId.includes(i)" >
               <td>{{i + 1}}</td>
               <td>
                 <label [for]="'firstName-'+ i">
@@ -139,11 +139,11 @@
                 </label>
               </td>
               <td>
-                <button (click)="saveUser(user.id, i)" type="button" class="btn btn-light">Save</button>
-                <button (click)="cancelEditUser(user.id)" type="button" class="btn btn-light">Cancel</button>
+                <button (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
+                <button (click)="cancelEditUser(i)" type="button" class="btn btn-light">Cancel</button>
               </td>
             </tr>
-            <tr class="hidden-row" [ngClass]="{'open': openedRowListID.includes(user.id)}">
+            <tr class="hidden-row" [ngClass]="{'open': openedRowListID.includes(i)}">
             <td colspan="7">
               <table class="table table-bordered">
                 <thead class="thead-light">
@@ -158,22 +158,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                <ng-container formArrayName="alternateAddresses" *ngFor="let address of user.alternateAddresses let idx = index">
-                  <tr *ngIf="!(user.isShowEditAddressRow === address.id)">
+                <ng-container formArrayName="alternateAddresses" *ngFor="let address of control.get('alternateAddresses').controls; let idx = index">
+                  <tr *ngIf="!(users[i].isShowEditAddressRow === idx+1)">
                     <th scope="row">{{idx + 1}}</th>
-                    <td>{{address.typeAddress}}</td>
-                    <td>{{address.address}}</td>
-                    <td>{{address.city}}</td>
-                    <td>{{address.country}}</td>
-                    <td>{{address.postCode}}</td>
+                    <td>{{address.get('typeAddress').value}}</td>
+                    <td>{{address.get('address').value}}</td>
+                    <td>{{address.get('city').value}}</td>
+                    <td>{{address.get('country').value}}</td>
+                    <td>{{address.get('postCode').value}}</td>
                     <td>
-                      <button (click)="showEditAddress(user.id, address.id)" type="button" class="btn btn-light">Edit</button>
-                      <button (click)="deleteAddress(user.id, address.id)" type="button" class="btn btn-light">Delete</button>
-                      <button *ngIf="!creatableAddress " (click)="addNewAddress(user.id, i)" type="button" class="btn btn-light">Add new</button>
+                      <button (click)="showEditAddress(i, idx)" type="button" class="btn btn-light">Edit</button>
+                      <button (click)="deleteAddress(i, idx)" type="button" class="btn btn-light">Delete</button>
+                      <button *ngIf="!creatableAddress " (click)="addNewAddress(i)" type="button" class="btn btn-light">Add new</button>
                     </td>
                   </tr>
                   <ng-container [formGroupName]="idx">
-                    <tr *ngIf="user.isShowEditAddressRow === address.id">
+                    <tr *ngIf="users[i].isShowEditAddressRow === idx+1">
                       <td>{{idx + 1}}</td>
                       <td>
                         <label [for]="i + '-typeAddress-'+ idx">
@@ -211,7 +211,8 @@
                         </label>
                       </td>
                       <td>
-                        <button (click)="saveUser(user.id, i)" type="button" class="btn btn-light">Save</button>
+                        <button (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
+                        <button (click)="cancelEditableAddress(i)" type="button" class="btn btn-light">Cancel</button>
                       </td>
                     </tr>
                   </ng-container>

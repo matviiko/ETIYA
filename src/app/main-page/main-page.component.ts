@@ -21,7 +21,7 @@ export class MainPageComponent implements OnInit {
   countries: Array<string> = [];
 
   openedRowListID: Array<number> = [];
-  openEditRowListId: Array<number> = [];
+  editableRowListId: Array<number> = [];
   creatableAddress = false;
 
   get alternativeUsers(): FormArray {
@@ -48,13 +48,6 @@ export class MainPageComponent implements OnInit {
       alternativeUsers: this.fb.array([]),
     });
 
-    this.usersService
-      .getAllUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: Array<User>) => {
-        this.usersFromJson = users;
-      });
-
     this.countryService
       .getAllCountries()
       .pipe(takeUntil(this.destroy$))
@@ -63,20 +56,30 @@ export class MainPageComponent implements OnInit {
       });
   }
 
+  alternativeAddress(index: number): FormArray {
+    return this.alternativeUsers.controls[index].get('alternateAddresses') as FormArray;
+  }
+
   submit(): void {
-    let result = this.usersFromJson;
-    Object.keys(this.searchForm.value).forEach((key: string) => {
-      result = result.filter((user: User) => {
-        // @ts-ignore
-        return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+    this.alternativeUsers.clear();
+    this.usersService
+      .getAllUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((users: Array<User>) => {
+        this.usersFromJson = users;
+        Object.keys(this.searchForm.value).forEach((key: string) => {
+          this.usersFromJson = this.usersFromJson.filter((user: User) => {
+            // @ts-ignore
+            return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+          });
+        });
+        this.usersFromJson = this.usersFromJson.map((user: User) => ({
+          ...user,
+          isShowEditAddressRow: 0,
+        }));
+        this.users = this.usersFromJson;
+        this.pushUsersAtEditForm(this.users);
       });
-    });
-    result = result.map((user: User) => ({
-      ...user,
-      isShowEditAddressRow: 0,
-    }));
-    this.users = result;
-    this.pushUserAtEditFormUsers(this.users);
   }
 
   reset(): void {
@@ -93,8 +96,8 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  pushUserAtEditFormUsers(users: Array<User>): void {
-    users.forEach((user, index) => {
+  pushUsersAtEditForm(users: Array<User>): void {
+    users.forEach(user => {
       this.alternativeUsers.push(
         this.fb.group({
           firstName: [user?.firstName, [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
@@ -102,65 +105,78 @@ export class MainPageComponent implements OnInit {
           username: [user?.username, Validators.required],
           phone: [user?.phone, Validators.required],
           email: [user?.email, [Validators.required, Validators.email]],
-          alternateAddresses: this.fb.array([]),
+          alternateAddresses: this.fb.array(this.buildFormGroupAddress(user.alternateAddresses)),
         })
       );
-      const control = this.alternativeUsers.controls[index].get('alternateAddresses') as FormArray;
-
-      user.alternateAddresses?.forEach(address => {
-        control.push(
-          this.fb.group({
-            typeAddress: [address.typeAddress, Validators.required],
-            address: [address.address, Validators.required],
-            city: [address.city, Validators.required],
-            country: [address.country, Validators.required],
-            postCode: [address.postCode, Validators.required],
-          })
-        );
-      });
     });
   }
 
-  deleteUser(id: number): void {
-    this.usersService.remove(id).subscribe(() => {
-      this.users = this.users.filter(u => u.id !== id);
+  buildFormGroupAddress(addresses: Array<Address> | undefined): Array<FormGroup> | Array<any> {
+    if (addresses) {
+      return addresses.map(address => {
+        return this.fb.group({
+          typeAddress: [address.typeAddress, Validators.required],
+          address: [address.address, Validators.required],
+          city: [address.city, Validators.required],
+          country: [address.country, Validators.required],
+          postCode: [address.postCode, Validators.required],
+        });
+      });
+    } else {
+      return [];
+    }
+  }
+
+  deleteUser(index: number): void {
+    const user = this.users[index];
+    this.usersService.remove(user.id).subscribe(() => {
+      this.alternativeUsers.removeAt(index);
+      this.usersService
+        .getAllUsers()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((users: Array<User>) => {
+          this.users = users;
+        });
     });
   }
 
   editUser(id: number): void {
-    if (!this.openEditRowListId.includes(id)) {
-      this.openEditRowListId = [...this.openEditRowListId, id];
+    if (!this.editableRowListId.includes(id)) {
+      this.editableRowListId = [...this.editableRowListId, id];
     }
   }
 
   cancelEditUser(id: number): void {
-    if (this.openEditRowListId.includes(id)) {
-      const index = this.openEditRowListId.findIndex(item => item === id);
-      this.openEditRowListId.splice(index, 1);
+    if (this.editableRowListId.includes(id)) {
+      const index = this.editableRowListId.findIndex(item => item === id);
+      this.editableRowListId.splice(index, 1);
+      this.alternativeUsers.clear();
+      this.submit();
     }
   }
 
-  saveUser(id: number, index: number): void {
-    let user: User = {
-      ...this.alternativeUsers.controls[index].value,
-      id,
+  saveUser(index: number): void {
+    const user = this.users[index];
+    let copy: User = {
+      ...this.alternativeUsers.at(index).value,
+      id: user.id,
     };
 
-    const addresses = user.alternateAddresses?.map((address: Address, i: number) => ({
+    const addresses = copy.alternateAddresses?.map((address: Address, i: number) => ({
       ...address,
       id: i + 1,
     }));
 
-    user = {
-      ...user,
+    copy = {
+      ...copy,
       alternateAddresses: addresses,
     };
 
     this.usersService
-      .update(user)
+      .update(copy)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.cancelEditUser(id);
+        this.cancelEditUser(index);
         this.usersService
           .getAllUsers()
           .pipe(takeUntil(this.destroy$))
@@ -169,45 +185,17 @@ export class MainPageComponent implements OnInit {
               ...person,
               isShowEditAddressRow: 0,
             }));
+            this.creatableAddress = false;
           });
       });
   }
 
-  // cancelEditAddress(idUser: number): void {
-  //   const user = this.users.find(u => u.id === idUser);
-  //   if (!(user?.isShowEditAddressRow === 0)) {
-  //     // @ts-ignore
-  //     user.isShowEditAddressRow = 0;
-  //   }
-  // }
-
-  deleteAddress(idUser: number, idAddress: number): void {
-    const user = this.users.find(u => u.id === idUser);
-    // @ts-ignore
-    let copy: User = { ...user };
-
-    const resultAddresses = copy.alternateAddresses?.filter((address: Address) => address.id !== idAddress);
-
-    delete copy.isShowEditAddressRow;
-    copy = { ...copy, alternateAddresses: resultAddresses };
-
-    this.usersService
-      .save(copy)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.usersService
-          .getAllUsers()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(users => {
-            this.users = users.map(person => ({
-              ...person,
-              isShowEditAddressRow: 0,
-            }));
-          });
-      });
+  deleteAddress(indUser: number, indAddress: number): void {
+    this.alternativeAddress(indUser).removeAt(indAddress);
+    this.saveUser(indUser);
   }
 
-  addNewAddress(idUser: number, index: number): void {
+  addNewAddress(index: number): void {
     const control = this.alternativeUsers.controls[index].get('alternateAddresses') as FormArray;
     control.push(
       this.fb.group({
@@ -218,28 +206,22 @@ export class MainPageComponent implements OnInit {
         postCode: [null, Validators.required],
       })
     );
-    const user = this.users.find(u => u.id === idUser);
     // @ts-ignore
-    user.alternateAddresses?.push({
-      id: index + 2,
-      typeAddress: '',
-      address: '',
-      city: '',
-      country: '',
-      postCode: '',
-    });
-    if (!(user?.isShowEditAddressRow === index + 2)) {
-      // @ts-ignore
-      user.isShowEditAddressRow = index + 2;
-    }
+    this.users[index].isShowEditAddressRow = 1 + this.users[index].alternateAddresses?.length;
     this.creatableAddress = true;
   }
 
-  showEditAddress(idUser: number, idAddress: number): void {
-    const user = this.users.find(u => u.id === idUser);
-    if (!(user?.isShowEditAddressRow === idAddress)) {
-      // @ts-ignore
-      user.isShowEditAddressRow = idAddress;
+  showEditAddress(indUser: number, indAddress: number): void {
+    const user = this.users[indUser];
+    if (!(user?.isShowEditAddressRow === indAddress + 1)) {
+      user.isShowEditAddressRow = indAddress + 1;
     }
+  }
+
+  cancelEditableAddress(indUser: number): void {
+    this.users[indUser].isShowEditAddressRow = 0;
+    this.creatableAddress = false;
+    this.alternativeUsers.clear();
+    this.submit();
   }
 }

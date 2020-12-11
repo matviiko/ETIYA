@@ -45,8 +45,3 @@ export interface Address {
   postCode: string;
   id: number;
 }
-
-export interface EditableAdress {
-  rowId: number;
-  addressId: number;
-}
