@@ -79,6 +79,7 @@ export class MainPageComponent implements OnInit {
         }));
         this.users = this.usersFromJson;
         this.pushUsersAtEditForm(this.users);
+        console.log(this.editForm);
       });
   }
 

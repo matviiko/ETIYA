@@ -113,30 +113,63 @@
           <ng-container [formGroupName]="i">
             <tr *ngIf="editableRowListId.includes(i)" >
               <td>{{i + 1}}</td>
-              <td>
-                <label [for]="'firstName-'+ i">
-                  <input class="edit__input" [id]="'firstName-'+ i" type="text" formControlName="firstName">
-                </label>
+              <td class="form-group">
+                <label [for]="'firstName-'+ i"></label>
+                <input
+                    [ngClass]="{ 'is-invalid':
+                      alternativeUsers.controls[i].get('firstName')?.invalid
+                      && alternativeUsers.controls[i].get('firstName')?.touched }"
+                    class="form-control" [id]="'firstName-'+ i" [pattern]="'^[a-zA-Z ]*$'" type="text" formControlName="firstName">
+                <div class="invalid-feedback" *ngIf="alternativeUsers.controls[i].get('firstName')?.invalid && alternativeUsers.controls[i].get('firstName')?.touched">
+                  <p *ngIf="alternativeUsers.controls[i].get('firstName')?.errors?.required">Enter your First Name</p>
+                  <p *ngIf="alternativeUsers.controls[i].get('firstName')?.errors?.pattern">Enter please only letter</p>
+                </div>
               </td>
-              <td>
-                <label [for]="'lastName-'+ i">
-                  <input [id]="'lastName-'+ i" type="text" formControlName="lastName">
-                </label>
+              <td class="form-group">
+                <label [for]="'lastName-'+ i"></label>
+                <input
+                    [ngClass]="{ 'is-invalid':
+                      alternativeUsers.controls[i].get('lastName')?.invalid
+                      && alternativeUsers.controls[i].get('lastName')?.touched }"
+                    [id]="'lastName-'+ i" class="form-control" type="text" formControlName="lastName">
+                <div class="invalid-feedback" *ngIf="alternativeUsers.controls[i].get('firstName')?.invalid && alternativeUsers.controls[i].get('lastName')?.touched">
+                  <p *ngIf="alternativeUsers.controls[i].get('lastName')?.errors?.required">Enter your Last Name</p>
+                  <p *ngIf="alternativeUsers.controls[i].get('lastName')?.errors?.pattern">Enter please only letter</p>
+                </div>
               </td>
-              <td>
-                <label [for]="'username-'+ i">
-                  <input class="edit__input" [id]="'username-'+ i" type="text" formControlName="username">
-                </label>
+              <td class="form-group">
+                <label [for]="'username-'+ i"></label>
+                <input
+                    [ngClass]="{ 'is-invalid':
+                      alternativeUsers.controls[i].get('username')?.invalid
+                      && alternativeUsers.controls[i].get('username')?.touched }"
+                    class="form-control" [id]="'username-'+ i" type="text" formControlName="username">
+                <div class="invalid-feedback" *ngIf="alternativeUsers.controls[i].get('username')?.invalid && alternativeUsers.controls[i].get('username')?.touched">
+                  <p *ngIf="alternativeUsers.controls[i].get('username')?.errors?.required">Enter your Username</p>
+                </div>
               </td>
-              <td>
-                <label [for]="'phone-'+ i">
-                  <input class="edit__input" [id]="'phone-'+ i" type="text" formControlName="phone">
-                </label>
+              <td class="form-group">
+                <label [for]="'phone-'+ i"></label>
+                <input
+                    [ngClass]="{ 'is-invalid':
+                      alternativeUsers.controls[i].get('phone')?.invalid
+                      && alternativeUsers.controls[i].get('phone')?.touched }"
+                    class="form-control" [id]="'phone-'+ i" type="text" formControlName="phone">
+                <div class="invalid-feedback" *ngIf="alternativeUsers.controls[i].get('phone')?.invalid && alternativeUsers.controls[i].get('phone')?.touched">
+                  <p *ngIf="alternativeUsers.controls[i].get('phone')?.errors?.required">Enter your Phone number</p>
+                </div>
               </td>
-              <td>
-                <label [for]="'email-'+ i">
-                  <input class="edit__input" [id]="'email-'+ i" type="text" formControlName="email">
-                </label>
+              <td class="form-group">
+                <label [for]="'email-'+ i"></label>
+                <input
+                    [ngClass]="{ 'is-invalid':
+                      alternativeUsers.controls[i].get('email')?.invalid
+                      && alternativeUsers.controls[i].get('email')?.touched }"
+                    class="form-control" [id]="'email-'+ i" type="text" formControlName="email">
+                <div class="invalid-feedback" *ngIf="alternativeUsers.controls[i].get('email')?.invalid && alternativeUsers.controls[i].get('email')?.touched">
+                  <p *ngIf="alternativeUsers.controls[i].get('email')?.errors?.required">Enter your email</p>
+                  <p *ngIf="alternativeUsers.controls[i].get('email')?.errors?.email">You must enter email</p>
+                </div>
               </td>
               <td>
                 <button (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
@@ -160,7 +193,7 @@
                 <tbody>
                 <ng-container formArrayName="alternateAddresses" *ngFor="let address of control.get('alternateAddresses').controls; let idx = index">
                   <tr *ngIf="!(users[i].isShowEditAddressRow === idx+1)">
-                    <th scope="row">{{idx + 1}}</th>
+                    <td>{{idx + 1}}</td>
                     <td>{{address.get('typeAddress').value}}</td>
                     <td>{{address.get('address').value}}</td>
                     <td>{{address.get('city').value}}</td>
@@ -175,40 +208,59 @@
                   <ng-container [formGroupName]="idx">
                     <tr *ngIf="users[i].isShowEditAddressRow === idx+1">
                       <td>{{idx + 1}}</td>
-                      <td>
-                        <label [for]="i + '-typeAddress-'+ idx">
-                          <select [id]="i + '-typeAddress-'+ idx" formControlName="typeAddress">
+                      <td class="form-group">
+                        <label [for]="i + '-typeAddress-'+ idx"></label>
+                        <select class="form-control" [id]="i + '-typeAddress-'+ idx" formControlName="typeAddress">
                             <option [ngValue]="null" disabled>Choose address type</option>
                             <option value="Billing address">Billing Address</option>
                             <option value="Shipment Address">Shipment Address</option>
                             <option value="Home Address">Home Address</option>
                           </select>
-                        </label>
                       </td>
-                      <td>
-                        <label [for]="i + '-address-'+ idx">
-                          <input [id]="i + '-address-'+ idx" type="text" formControlName="address">
-                        </label>
+                      <td class="form-group">
+                        <label [for]="i + '-address-'+ idx"></label>
+                        <input
+                          [ngClass]="{ 'is-invalid':
+                          alternativeAddress(i).controls[idx].get('address')?.invalid
+                          && alternativeAddress(i).controls[idx].get('address')?.touched }"
+                          class="form-control" [id]="i + '-address-'+ idx" type="text" formControlName="address">
+                        <div class="invalid-feedback" *ngIf="alternativeAddress(i).controls[idx].get('address')?.invalid
+                          && alternativeAddress(i).controls[idx].get('address')?.touched">
+                          <p *ngIf="alternativeAddress(i).controls[idx].get('address')?.errors?.required">Enter your First Name</p>
+                        </div>
                       </td>
-                      <td>
-                        <label [for]="i + '-city-'+ idx">
-                          <input class="edit__input" [id]="i + '-city-'+ idx" type="text" formControlName="city">
-                        </label>
+                      <td class="form-group">
+                        <label [for]="i + '-city-'+ idx"></label>
+                        <input
+                          [ngClass]="{ 'is-invalid':
+                          alternativeAddress(i).controls[idx].get('city')?.invalid
+                          && alternativeAddress(i).controls[idx].get('city')?.touched }"
+                          class="form-control" [id]="i + '-city-'+ idx" type="text" formControlName="city">
+                        <div class="invalid-feedback" *ngIf="alternativeAddress(i).controls[idx].get('city')?.invalid
+                          && alternativeAddress(i).controls[idx].get('city')?.touched">
+                          <p *ngIf="alternativeAddress(i).controls[idx].get('city')?.errors?.required">Enter your First Name</p>
+                        </div>
                       </td>
-                      <td>
-                        <label [for]="i + '-country-'+ idx">
-                          <select class="form-control" [id]="i + '-country-'+ idx" formControlName="country">
+                      <td class="form-group">
+                        <label [for]="i + '-country-'+ idx"></label>
+                        <select class="form-control" [id]="i + '-country-'+ idx" formControlName="country">
                             <option [ngValue]="null" disabled>Choose country</option>
                             <option *ngFor="let country of countries" [value]="country.toLowerCase()">
                               {{country}}
                             </option>
                           </select>
-                        </label>
                       </td>
-                      <td>
-                        <label [for]="i + '-postCode-'+ idx">
-                          <input class="edit__input" [id]="i + '-postCode-'+ idx" type="text" formControlName="postCode">
-                        </label>
+                      <td class="form-group">
+                        <label [for]="i + '-postCode-'+ idx"></label>
+                        <input
+                          [ngClass]="{ 'is-invalid':
+                          alternativeAddress(i).controls[idx].get('postCode')?.invalid
+                          && alternativeAddress(i).controls[idx].get('postCode')?.touched }"
+                            class="form-control" [id]="i + '-postCode-'+ idx" type="text" formControlName="postCode">
+                        <div class="invalid-feedback" *ngIf="alternativeAddress(i).controls[idx].get('postCode')?.invalid
+                          && alternativeAddress(i).controls[idx].get('postCode')?.touched">
+                          <p *ngIf="alternativeAddress(i).controls[idx].get('postCode')?.errors?.required">Enter your First Name</p>
+                        </div>
                       </td>
                       <td>
                         <button (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
