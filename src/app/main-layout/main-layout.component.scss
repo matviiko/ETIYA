@@ -1,1 +1,15 @@
+.main-layout {
+  min-height: calc(100% - 150px);
+  padding-bottom: 150px;
+}
 
+.main-layout:after {
+  content: '';
+  clear: both;
+  display: block;
+}
+
+.footer {
+  height: 150px;
+  margin-top: -150px;
+}

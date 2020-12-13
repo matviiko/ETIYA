@@ -1,6 +1,6 @@
 <div class="main__info d-flex">
   <div class="title col-sm-2">
-    <h3>Main info</h3>
+    <h3 class="p-3">Main info</h3>
   </div>
   <div class="form__list pt-4 col-sm-10">
     <form (ngSubmit)="submit()" [formGroup]="searchForm">
@@ -95,15 +95,15 @@
           <th scope="col">Action</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody *ngIf="alternativeUsers.controls">
         <ng-container formArrayName="alternativeUsers" *ngFor="let control of alternativeUsers.controls; let i = index">
           <tr *ngIf="!editableRowListId.includes(i)">
             <td>{{i + 1}}</td>
-            <td>{{control.get('firstName').value}}</td>
-            <td>{{control.get('lastName').value}}</td>
-            <td>{{control.get('username').value}}</td>
-            <td>{{control.get('phone').value}}</td>
-            <td>{{control.get('email').value}}</td>
+            <td>{{control.get('firstName')?.value}}</td>
+            <td>{{control.get('lastName')?.value}}</td>
+            <td>{{control.get('username')?.value}}</td>
+            <td>{{control.get('phone')?.value}}</td>
+            <td>{{control.get('email')?.value}}</td>
             <td>
               <button (click)="editUser(i)" type="button" class="btn btn-light">Edit</button>
               <button (click)="deleteUser(i)" type="button" class="btn btn-light">Delete</button>
@@ -191,16 +191,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <ng-container formArrayName="alternateAddresses" *ngFor="let address of control.get('alternateAddresses').controls; let idx = index">
+                <ng-container formArrayName="alternateAddresses" *ngFor="let address of alternativeAddress(i)?.controls; let idx = index">
                   <tr *ngIf="!(users[i].isShowEditAddressRow === idx+1)">
                     <td>{{idx + 1}}</td>
-                    <td>{{address.get('typeAddress').value}}</td>
-                    <td>{{address.get('address').value}}</td>
-                    <td>{{address.get('city').value}}</td>
-                    <td>{{address.get('country').value}}</td>
-                    <td>{{address.get('postCode').value}}</td>
+                    <td>{{address.get('typeAddress')?.value}}</td>
+                    <td>{{address.get('address')?.value}}</td>
+                    <td>{{address.get('city')?.value}}</td>
+                    <td>{{address.get('country')?.value}}</td>
+                    <td>{{address.get('postCode')?.value}}</td>
                     <td>
-                      <button (click)="showEditAddress(i, idx)" type="button" class="btn btn-light">Edit</button>
+                      <button (click)="showEditableAddress(i, idx)" type="button" class="btn btn-light">Edit</button>
                       <button (click)="deleteAddress(i, idx)" type="button" class="btn btn-light">Delete</button>
                       <button *ngIf="!creatableAddress " (click)="addNewAddress(i)" type="button" class="btn btn-light">Add new</button>
                     </td>
@@ -269,7 +269,6 @@
                     </tr>
                   </ng-container>
                 </ng-container>
-
                 </tbody>
               </table>
             </td>

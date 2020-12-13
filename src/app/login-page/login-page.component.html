@@ -1,0 +1,29 @@
+<div class="login">
+  <form class="form card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1 class="m-3">Login</h1>
+    <div class="form-group mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input
+        [ngClass]="{ 'is-invalid': form.get('email')?.invalid && form.get('email')?.touched }"
+        type="email" class="form-control" id="email" placeholder="Email" formControlName="email">
+      <div class="invalid-feedback" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+        <p *ngIf="form.get('email')?.errors?.required">Enter your email</p>
+        <p *ngIf="form.get('email')?.errors?.email">You must enter email</p>
+      </div>
+    </div>
+    <div class="form-group mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input
+        [ngClass]="{ 'is-invalid': form.get('email')?.invalid && form.get('email')?.touched }"
+        type="password" class="form-control" id="password" placeholder="Password" formControlName="password">
+      <div class="invalid-feedback" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+        <p *ngIf="form.get('password')?.errors?.required">Enter your password</p>
+        <p *ngIf="form.get('password')?.errors?.minlength">
+          You need write {{ form.get('password')?.errors?.minlength.requiredLength }} symbols, you write
+          {{ form.get('password')?.errors?.minlength.actualLength }} symbols.
+        </p>
+      </div>
+    </div>
+    <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Login</button>
+  </form>
+</div>

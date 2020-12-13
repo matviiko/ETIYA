@@ -74,12 +74,20 @@
           "id": 1
         },
         {
+          "typeAddress": "Home Address",
+          "address": "ВУЛ. ПІВНІЧНИЙ БУЛЬВАР ІМЕНІ ПУШКІНА",
+          "city": "М. ІВАНО-ФРАНКІВСЬК",
+          "country": "austria",
+          "postCode": "76019",
+          "id": 2
+        },
+        {
           "typeAddress": "Shipment Address",
           "address": "zaliznuchna",
           "city": "Lviv",
           "country": "ukraine",
           "postCode": "65565",
-          "id": 2
+          "id": 3
         },
         {
           "typeAddress": "Home Address",
@@ -87,7 +95,7 @@
           "city": "Harkiv",
           "country": "ukraine",
           "postCode": "12345",
-          "id": 3
+          "id": 4
         }
       ],
       "id": 8

@@ -1,1 +1,57 @@
-<p>user-info-page works!</p>
+<div *ngIf="user" class="row p-4">
+  <div class="title col-sm-3">
+    <h3>Address information</h3>
+  </div>
+  <div class="col-sm-9 pt-3">
+    <div class="p-3">
+      <h3>Main information</h3>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Username</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Email</th>
+          <th scope="col">Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>{{user.firstName}}</td>
+          <td>{{user.lastName}}</td>
+          <td>{{user.username}}</td>
+          <td>{{user.phone}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.password}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-3">
+      <h3>Address information</h3>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Type Address</th>
+          <th scope="col">Address</th>
+          <th scope="col">City</th>
+          <th scope="col">Country</th>
+          <th scope="col">Post Code</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let address of user.alternateAddresses; let i = index">
+          <th scope="row">{{i + 1}}</th>
+          <td>{{address.typeAddress}}</td>
+          <td>{{address.address}}</td>
+          <td>{{address.city}}</td>
+          <td>{{address.country}}</td>
+          <td>{{address.postCode}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -67,10 +67,14 @@ export class MainPageComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((users: Array<User>) => {
         this.usersFromJson = users;
-        Object.keys(this.searchForm.value).forEach((key: string) => {
+        Object.keys(this.searchForm.value).forEach(key => {
           this.usersFromJson = this.usersFromJson.filter((user: User) => {
-            // @ts-ignore
-            return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+            if (this.searchForm.value[key] === null) {
+              return true;
+            } else {
+              // @ts-ignore
+              return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+            }
           });
         });
         this.usersFromJson = this.usersFromJson.map((user: User) => ({
@@ -79,7 +83,6 @@ export class MainPageComponent implements OnInit {
         }));
         this.users = this.usersFromJson;
         this.pushUsersAtEditForm(this.users);
-        console.log(this.editForm);
       });
   }
 
@@ -212,7 +215,7 @@ export class MainPageComponent implements OnInit {
     this.creatableAddress = true;
   }
 
-  showEditAddress(indUser: number, indAddress: number): void {
+  showEditableAddress(indUser: number, indAddress: number): void {
     const user = this.users[indUser];
     if (!(user?.isShowEditAddressRow === indAddress + 1)) {
       user.isShowEditAddressRow = indAddress + 1;

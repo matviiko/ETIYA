@@ -10,9 +10,11 @@ import { HeaderComponent } from './shared/components/header/header.component';
 import { UserInfoPageComponent } from './user-info-page/user-info-page.component';
 import { CreateUserPageComponent } from './create-user-page/create-user-page.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
-import {FooterComponent} from './shared/components/footer/footer.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import { FooterComponent } from './shared/components/footer/footer.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { AuthGuard } from './shared/services/auth.guard';
 
 @NgModule({
   declarations: [
@@ -24,16 +26,10 @@ import {HttpClientModule} from '@angular/common/http';
     UserInfoPageComponent,
     CreateUserPageComponent,
     SidebarComponent,
+    LoginPageComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbModule,
-    HttpClientModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, NgbModule, HttpClientModule],
+  providers: [AuthGuard],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

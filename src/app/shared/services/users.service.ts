@@ -17,18 +17,16 @@ export class UsersService {
     return this.http.get<Array<User>>('http://localhost:3000/profiles');
   }
 
+  getUsersById(id: number): Observable<User> {
+    return this.http.get<User>(`http://localhost:3000/profiles/${id}`);
+  }
+
   save(user: User): Observable<User> {
-    return this.http.put<User>(
-      `http://localhost:3000/profiles/${user.id}`,
-      user
-    );
+    return this.http.put<User>(`http://localhost:3000/profiles/${user.id}`, user);
   }
 
   update(user: User): Observable<User> {
-    return this.http.patch<User>(
-      `http://localhost:3000/profiles/${user.id}`,
-      user
-    );
+    return this.http.patch<User>(`http://localhost:3000/profiles/${user.id}`, user);
   }
 
   remove(id: number): Observable<void> {
