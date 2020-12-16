@@ -13,25 +13,29 @@
           "typeAddress": "Billing address",
           "address": "Vovchunecka 208",
           "city": "Ivano-Frankivsk",
-          "country": "ukraine",
-          "postCode": "76002",
-          "id": 1
+          "country": "united kingdom of great britain and northern ireland",
+          "postCode": "76002"
         },
         {
           "typeAddress": "Billing address",
-          "address": "Lesya Ukrainku 5",
+          "address": "Lesy Ukrainku 5",
           "city": "Ivano-Frankivsk",
           "country": "ukraine",
-          "postCode": "76007",
-          "id": 2
+          "postCode": "76007"
         },
         {
           "typeAddress": "Home Address",
-          "address": "Shevchenka 14",
+          "address": "Franka 14",
           "city": "Lviv",
           "country": "ukraine",
-          "postCode": "76074",
-          "id": 3
+          "postCode": "76074"
+        },
+        {
+          "typeAddress": "Home Address",
+          "address": "Lesi Ukrainku 15",
+          "city": "Lviv",
+          "country": "ukraine",
+          "postCode": "14145"
         }
       ],
       "id": 4
@@ -70,24 +74,21 @@
           "address": "Vovchunecka 208",
           "city": "Ivano-Frankivsk",
           "country": "ukraine",
-          "postCode": "76000",
-          "id": 1
+          "postCode": "76000"
         },
         {
           "typeAddress": "Shipment Address",
           "address": "zaliznuchna",
           "city": "Lviv",
           "country": "ukraine",
-          "postCode": "65565",
-          "id": 2
+          "postCode": "65565"
         },
         {
           "typeAddress": "Home Address",
           "address": "lukasa15",
           "city": "Harkiv",
           "country": "ukraine",
-          "postCode": "12345",
-          "id": 3
+          "postCode": "12345"
         }
       ],
       "id": 8

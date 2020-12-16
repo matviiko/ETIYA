@@ -4,7 +4,9 @@ import { UsersService } from '../shared/services/users.service';
 import { Address, User } from '../shared/interfaces';
 import { CountryService } from '../shared/services/country.service';
 import { NgOnDestroy } from '../shared/services/ngOnDestroy';
-import { takeUntil } from 'rxjs/operators';
+import { pluck, takeUntil } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
+import { GetAllUsers, RemoveUser, SaveUsers } from '../actions/users.actions';
 
 @Component({
   selector: 'app-main-page',
@@ -17,7 +19,7 @@ export class MainPageComponent implements OnInit {
   editForm!: FormGroup;
 
   users: Array<User> = [];
-  usersFromJson!: Array<User>;
+  // usersFromJson!: Array<User>;
   countries: Array<string> = [];
 
   openedRowListID: Array<number> = [];
@@ -30,10 +32,12 @@ export class MainPageComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private store: Store,
     private usersService: UsersService,
     private countryService: CountryService,
-    @Self() private destroy$: NgOnDestroy
-  ) {}
+    @Self() private destroy$: NgOnDestroy,
+  ) {
+  }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
@@ -61,29 +65,55 @@ export class MainPageComponent implements OnInit {
   }
 
   submit(): void {
-    this.alternativeUsers.clear();
-    this.usersService
-      .getAllUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: Array<User>) => {
-        this.usersFromJson = users;
-        Object.keys(this.searchForm.value).forEach(key => {
-          this.usersFromJson = this.usersFromJson.filter((user: User) => {
-            if (this.searchForm.value[key] === null) {
-              return true;
-            } else {
-              // @ts-ignore
-              return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
-            }
-          });
-        });
-        this.usersFromJson = this.usersFromJson.map((user: User) => ({
-          ...user,
-          isShowEditAddressRow: 0,
-        }));
-        this.users = this.usersFromJson;
-        this.pushUsersAtEditForm(this.users);
+    this.store.dispatch(new GetAllUsers(this.searchForm)).pipe(
+      pluck('users', 'users'),
+      takeUntil(this.destroy$))
+      .subscribe((state) => {
+          if (state.length > 0) {
+            this.users = state;
+            this.pushUsersAtEditForm(this.filterUsers(state));
+          }
       });
+
+    // this.usersService
+    //   .getAllUsers()
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((users: Array<User>) => {
+    //     this.usersFromJson = users;
+    //     Object.keys(this.searchForm.value).forEach(key => {
+    //       this.usersFromJson = this.usersFromJson.filter((user: User) => {
+    //         if (this.searchForm.value[key] === null) {
+    //           return true;
+    //         } else {
+    //           // @ts-ignore
+    //           return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+    //         }
+    //       });
+    //     });
+    //     this.usersFromJson = this.usersFromJson.map((user: User) => ({
+    //       ...user,
+    //       isShowEditAddressRow: 0,
+    //     }));
+    //     this.users = this.usersFromJson;
+    //     this.pushUsersAtEditForm(this.users);
+    //   });
+  }
+
+  filterUsers(users: Array<User>): Array<User> {
+    Object.keys(this.searchForm.value).forEach((key)  => {
+      users = users.filter((user) => {
+        if (this.searchForm.value[key] === null) {
+          return true;
+        } else {
+          return user[key].toLowerCase().includes(this.searchForm.value[key].toLowerCase());
+        }
+      });
+    });
+    users = users?.map((user: User) => ({
+      ...user,
+      isShowEditAddressRow: 0,
+    }));
+    return users;
   }
 
   reset(): void {
@@ -101,6 +131,7 @@ export class MainPageComponent implements OnInit {
   }
 
   pushUsersAtEditForm(users: Array<User>): void {
+    this.alternativeUsers.clear();
     users.forEach(user => {
       this.alternativeUsers.push(
         this.fb.group({
@@ -110,7 +141,7 @@ export class MainPageComponent implements OnInit {
           phone: [user?.phone, Validators.required],
           email: [user?.email, [Validators.required, Validators.email]],
           alternateAddresses: this.fb.array(this.buildFormGroupAddress(user.alternateAddresses)),
-        })
+        }),
       );
     });
   }
@@ -133,15 +164,20 @@ export class MainPageComponent implements OnInit {
 
   deleteUser(index: number): void {
     const user = this.users[index];
-    this.usersService.remove(user.id).subscribe(() => {
-      this.alternativeUsers.removeAt(index);
-      this.usersService
-        .getAllUsers()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((users: Array<User>) => {
-          this.users = users;
-        });
-    });
+    this.store.dispatch(new RemoveUser(user.id)).pipe(takeUntil(this.destroy$)).subscribe(
+      () => {
+        this.submit();
+      });
+
+    // this.usersService.remove(user.id).subscribe(() => {
+    //   this.alternativeUsers.removeAt(index);
+    //   this.usersService
+    //     .getAllUsers()
+    //     .pipe(takeUntil(this.destroy$))
+    //     .subscribe((users: Array<User>) => {
+    //       this.users = users;
+    //     });
+    // });
   }
 
   editUser(id: number): void {
@@ -161,37 +197,41 @@ export class MainPageComponent implements OnInit {
 
   saveUser(index: number): void {
     const user = this.users[index];
-    let copy: User = {
+    const copy: User = {
       ...this.alternativeUsers.at(index).value,
       id: user.id,
     };
 
-    const addresses = copy.alternateAddresses?.map((address: Address, i: number) => ({
-      ...address,
-      id: i + 1,
-    }));
+    // const addresses = copy.alternateAddresses?.map((address: Address, i: number) => ({
+    //   ...address,
+    //   id: i + 1,
+    // }));
+    //
+    // copy = {
+    //   ...copy,
+    //   alternateAddresses: addresses,
+    // };
 
-    copy = {
-      ...copy,
-      alternateAddresses: addresses,
-    };
+    this.store.dispatch(new SaveUsers(copy)).subscribe(() => {
+      this.cancelEditUser(index);
+    });
 
-    this.usersService
-      .update(copy)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.cancelEditUser(index);
-        this.usersService
-          .getAllUsers()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(users => {
-            this.users = users.map(person => ({
-              ...person,
-              isShowEditAddressRow: 0,
-            }));
-            this.creatableAddress = false;
-          });
-      });
+    // this.usersService
+    //   .update(copy)
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(() => {
+    //     this.cancelEditUser(index);
+    //     this.usersService
+    //       .getAllUsers()
+    //       .pipe(takeUntil(this.destroy$))
+    //       .subscribe(users => {
+    //         this.users = users.map(person => ({
+    //           ...person,
+    //           isShowEditAddressRow: 0,
+    //         }));
+    //         this.creatableAddress = false;
+    //       });
+    //   });
   }
 
   deleteAddress(indUser: number, indAddress: number): void {
@@ -208,10 +248,9 @@ export class MainPageComponent implements OnInit {
         city: [null, Validators.required],
         country: [null, Validators.required],
         postCode: [null, Validators.required],
-      })
+      }),
     );
-    // @ts-ignore
-    this.users[index].isShowEditAddressRow = 1 + this.users[index].alternateAddresses?.length;
+    this.users[index].isShowEditAddressRow = 1 + this.users[index].alternateAddresses.length;
     this.creatableAddress = true;
   }
 

@@ -13,7 +13,7 @@ const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       { path: '', redirectTo: '/', pathMatch: 'full' },
-      { path: '', component: MainPageComponent },
+      { path: '', component: MainPageComponent, canActivate: [AuthGuard]},
       { path: 'user/:id', component: UserInfoPageComponent, canActivate: [AuthGuard] },
       { path: 'create', component: CreateUserPageComponent },
     ],

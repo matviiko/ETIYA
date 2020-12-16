@@ -25,14 +25,18 @@ export interface Country {
   translations: any;
 }
 
-export interface User {
+export interface IKey {
+ [key: string]: any;
+}
+
+export interface User extends IKey{
   firstName: string;
   lastName: string;
   username: string;
   phone: string;
   email: string;
   password: string;
-  alternateAddresses?: Array<Address>;
+  alternateAddresses: Array<Address>;
   id: number;
   isShowEditAddressRow?: number;
 }
