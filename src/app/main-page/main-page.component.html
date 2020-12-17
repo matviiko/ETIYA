@@ -263,7 +263,7 @@
                         </div>
                       </td>
                       <td>
-                        <button (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
+                        <button [disabled]='alternativeAddress(i).invalid' (click)="saveUser(i)" type="button" class="btn btn-light">Save</button>
                         <button (click)="cancelEditableAddress(i)" type="button" class="btn btn-light">Cancel</button>
                       </td>
                     </tr>

@@ -65,13 +65,17 @@ export class MainPageComponent implements OnInit {
   }
 
   submit(): void {
-    this.store.dispatch(new GetAllUsers(this.searchForm)).pipe(
+    this.store.dispatch(new GetAllUsers()).pipe(
       pluck('users', 'users'),
       takeUntil(this.destroy$))
       .subscribe((state) => {
           if (state.length > 0) {
-            this.users = state;
-            this.pushUsersAtEditForm(this.filterUsers(state));
+            this.users = this.filterUsers(state);
+            this.users = this.users.map((user: User) => ({
+              ...user,
+              isShowEditAddressRow: 0,
+            }));
+            this.pushUsersAtEditForm(this.users);
           }
       });
 
@@ -213,6 +217,8 @@ export class MainPageComponent implements OnInit {
     // };
 
     this.store.dispatch(new SaveUsers(copy)).subscribe(() => {
+      this.users[index].isShowEditAddressRow = 0;
+      this.creatableAddress = false;
       this.cancelEditUser(index);
     });
 
