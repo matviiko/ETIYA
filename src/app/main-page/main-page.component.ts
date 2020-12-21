@@ -4,9 +4,13 @@ import { UsersService } from '../shared/services/users.service';
 import { Address, User } from '../shared/interfaces';
 import { CountryService } from '../shared/services/country.service';
 import { NgOnDestroy } from '../shared/services/ngOnDestroy';
-import { pluck, takeUntil } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
+import { takeUntil } from 'rxjs/operators';
+import { Select, Store } from '@ngxs/store';
 import { GetAllUsers, RemoveUser, SaveUsers } from '../actions/users.actions';
+import { GetAllCountries } from '../actions/countries.action';
+import { CountriesState } from '../state/countries.state';
+import { Observable } from 'rxjs';
+import { UsersState } from '../state/users.state';
 
 @Component({
   selector: 'app-main-page',
@@ -21,6 +25,8 @@ export class MainPageComponent implements OnInit {
   users: Array<User> = [];
   // usersFromJson!: Array<User>;
   countries: Array<string> = [];
+  @Select(CountriesState.getCountriesList)
+  countriesList$!: Observable<Array<string>>;
 
   openedRowListID: Array<number> = [];
   editableRowListId: Array<number> = [];
@@ -51,13 +57,12 @@ export class MainPageComponent implements OnInit {
     this.editForm = this.fb.group({
       alternativeUsers: this.fb.array([]),
     });
-
-    this.countryService
-      .getAllCountries()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(response => {
-        this.countries = response.map(item => item.name);
-      });
+    this.store.dispatch(new GetAllCountries()).subscribe(() => {
+      const countries = this.store.selectSnapshot(CountriesState.getCountriesList);
+      if (countries) {
+        this.countries = countries;
+      }
+    });
   }
 
   alternativeAddress(index: number): FormArray {
@@ -66,17 +71,17 @@ export class MainPageComponent implements OnInit {
 
   submit(): void {
     this.store.dispatch(new GetAllUsers()).pipe(
-      pluck('users', 'users'),
       takeUntil(this.destroy$))
-      .subscribe((state) => {
-          if (state.length > 0) {
-            this.users = this.filterUsers(state);
-            this.users = this.users.map((user: User) => ({
-              ...user,
-              isShowEditAddressRow: 0,
-            }));
-            this.pushUsersAtEditForm(this.users);
-          }
+      .subscribe(() => {
+        const users = this.store.selectSnapshot(UsersState.getUsers);
+        if (users) {
+          this.users = this.filterUsers(users);
+          this.users = this.users.map((user: User) => ({
+            ...user,
+            isShowEditAddressRow: 0,
+          }));
+          this.pushUsersAtEditForm(this.users);
+        }
       });
 
     // this.usersService
@@ -104,7 +109,7 @@ export class MainPageComponent implements OnInit {
   }
 
   filterUsers(users: Array<User>): Array<User> {
-    Object.keys(this.searchForm.value).forEach((key)  => {
+    Object.keys(this.searchForm.value).forEach((key) => {
       users = users.filter((user) => {
         if (this.searchForm.value[key] === null) {
           return true;

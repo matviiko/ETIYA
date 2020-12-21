@@ -19,6 +19,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { AuthGuard } from './shared/services/auth.guard';
 import { UsersState } from './state/users.state';
+import { CountriesState } from './state/countries.state';
 
 
 @NgModule({
@@ -40,7 +41,7 @@ import { UsersState } from './state/users.state';
     ReactiveFormsModule,
     NgbModule,
     HttpClientModule,
-    NgxsModule.forRoot([UsersState]),
+    NgxsModule.forRoot([UsersState, CountriesState]),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot()
   ],
